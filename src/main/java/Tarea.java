@@ -108,4 +108,15 @@ public class Tarea {
     public List<String> getListaEtiquetas() {
         return listaEtiquetas;
     }
+
+    @Override
+    public String toString() {
+        return "Tarea{" +
+                "titulo='" + titulo + '\'' +
+                ", personasAsignadas=" + personasAsignadas +
+                ", responsable=" + responsable +
+                ", estado=" + estado +
+                ", resultadoEsperado=" + resultadoEsperado +
+                '}';
+    }
 }

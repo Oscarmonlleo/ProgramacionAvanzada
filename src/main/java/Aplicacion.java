@@ -1,6 +1,5 @@
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
@@ -9,26 +8,28 @@ public class Aplicacion {
         Scanner scan = new Scanner(System.in);
 
         System.out.println("Introduce el nombre del proyecto");
-        String nombreProyecto = scan.nextLine();
+        String nombreProyecto = scan.next();
+
         Proyecto proyecto = crearProyecto(nombreProyecto);
         List<Persona> personas = new ArrayList<>();
         int opcion;
 
-        System.out.println("0 - Salir");
-        System.out.println("1 - Dar de alta a una persona que trabajan en el proyecto");
-        System.out.println("2 - Dar de alta las tareas con sus datos");
-        System.out.println("3 - Marcar una tarea como finalizada");
-        System.out.println("4 - Introducir una persona de una tarea");
-        System.out.println("5 - Eliminar una persona de una tarea");
-        System.out.println("6 - Listar las personas asignadas a un proyecto");
-        System.out.println("7 - Listar las tareas de un proyecto");
+
         do{
+            System.out.println("0 - Salir");
+            System.out.println("1 - Dar de alta a una persona que trabajan en el proyecto");
+            System.out.println("2 - Dar de alta las tareas con sus datos");
+            System.out.println("3 - Marcar una tarea como finalizada");
+            System.out.println("4 - Introducir una persona de una tarea");
+            System.out.println("5 - Eliminar una persona de una tarea");
+            System.out.println("6 - Listar las personas asignadas a un proyecto");
+            System.out.println("7 - Listar las tareas de un proyecto");
             System.out.println("Elija una opcion");
             opcion = scan.nextInt();
             switch(opcion){
                 case 0: break;
                 case 1:{
-                    darAltaPersona(scan,personas);
+                    darAltaPersona(scan,personas, proyecto);
                     break;
                 }
                 case 2: {
@@ -39,13 +40,16 @@ public class Aplicacion {
                     break;
                 }
                 case 4: {
-                    tareaFinalizada(proyecto, scan);
+                    introducirPersona(scan,personas,proyecto);
+                    break;
                 }
                 case 5: {
-                    eliminarPersona(tarea, scan);
+                    eliminarPersona(scan,personas,proyecto);
+                    break;
                 }
                 case 6: {
-
+                    listarPersonasProyecto(proyecto);
+                    break;
                 }
                 case 7: {
                     listarTareasProyecto(proyecto);
@@ -64,15 +68,16 @@ public class Aplicacion {
     }
 
     //caso 1
-    public static void darAltaPersona(Scanner scan,List personas){
+    public static void darAltaPersona(Scanner scan,List personas, Proyecto proyecto){
         System.out.println("Introduce el DNI de la persona");
-        String dni = scan.nextLine();
+        String dni = scan.next();
         System.out.println("Introduce el nombre de la persona");
-        String nombre = scan.nextLine();
+        String nombre = scan.next();
         System.out.println("Introduce el correo de la persona");
-        String correo = scan.nextLine();
+        String correo = scan.next();
 
         Persona persona1 = new Persona(dni,nombre,correo);
+        proyecto.setPersonas(persona1);
         personas.add(persona1);
 
 
@@ -83,22 +88,64 @@ public class Aplicacion {
     public static void darAltaTarea(Scanner scan, List personas){
 
         System.out.println("Introduce el titulo de la tarea");
-        String titulo = scan.nextLine();
+        String titulo = scan.next();
         System.out.println("Introduce la descripcion de la tarea");
-        String descripcion = scan.nextLine();
-        System.out.println("Introduce el responsable de la tarea");
-        String nombreResponsable = scan.nextLine();
-        Persona responsable = responsableTarea(nombreResponsable,personas);
+        String descripcion = scan.next();
         System.out.println("Introduce la prioridad de la tarea");
         int prioridad = scan.nextInt();
+        System.out.println("Introduce el responsable de la tarea");
+        String nombreResponsable = scan.next();
         LocalDate fechaCreacion = LocalDate.now();
         System.out.println("Introduce el estado de la tarea");
         boolean estado = scan.nextBoolean();
         System.out.println("Introduce el el tipo de tarea que sera");
-        String tipoTarea = scan.next();
-        List<String> listaEtiquetas = introducirEtiqueta(scan);
+        String tipoResultado = scan.next();
 
-        Tarea tarea = new Tarea(titulo,descripcion,personas,responsable,prioridad,fechaCreacion,estado,tipoTarea,listaEtiquetas);
+        List<String> listaEtiquetas = new ArrayList<>();
+        int opcionEtiqueta = 0;
+        do{
+            if(opcionEtiqueta != 2){
+                System.out.println("Introduzca una etiqueta al proyecto");
+                String etiqueta = scan.next();
+                listaEtiquetas.add(etiqueta);
+            }
+            System.out.println("Desea añadir una nueva etiqueta? Introduce 1 para si 2 para salir");
+            opcionEtiqueta = scan.nextInt();
+
+        }while (opcionEtiqueta != 2);
+        while(opcionEtiqueta != 0){
+            System.out.println("Introduzca una etiqueta al proyecto");
+            String etiqueta = scan.next();
+            listaEtiquetas.add(etiqueta);
+            System.out.println("Desea añadir una nueva etiqueta? Introduce 1 para si 2 para salir");
+            opcionEtiqueta = scan.nextInt();
+        }
+
+
+        Resultado resultadoTarea = tipoTarea(tipoResultado);
+        Persona responsable = responsableTarea(nombreResponsable,personas);
+        Tarea tarea = new Tarea(titulo,descripcion,personas,responsable,prioridad,fechaCreacion,estado,resultadoTarea,listaEtiquetas);
+
+    }
+
+    public static Resultado tipoTarea(String tipoResultado){
+
+        if( tipoResultado == "pagina web"){
+            PaginaWeb resultado = new PaginaWeb();
+            return resultado;
+        }
+        if( tipoResultado == "documentacion"){
+            Documentacion resultado = new Documentacion();
+            return resultado;
+
+        }
+        if( tipoResultado == "programa"){
+            Programa resultado = new Programa();
+            return resultado;
+        }else{
+            Biblioteca resultado = new Biblioteca();
+            return resultado;
+        }
 
     }
 
@@ -113,27 +160,12 @@ public class Aplicacion {
 
     }
 
-    public static List introducirEtiqueta(Scanner scan){
-        int opcionEtiqueta = 1;
-        List<String> listaEtiquetas = new ArrayList<>();
-        do{
-            if(opcionEtiqueta != 0){
-                System.out.println("Introduzca una etiqueta al proyecto");
-                String etiqueta = scan.next();
-                listaEtiquetas.add(etiqueta);
-            }
-            System.out.println("Desea añadir una nueva etiqueta? Introduce 1 para si 0 para salir");
-            opcionEtiqueta = scan.nextInt();
 
-        }while (opcionEtiqueta != 0);
-
-        return listaEtiquetas;
-    }
 
     //caso 3
     public static void tareaFinalizada(Proyecto proyecto, Scanner scan){
         System.out.println("Introduce el nombre de la tarea finalizada");
-        String nombreTareaFinalizada = scan.nextLine();
+        String nombreTareaFinalizada = scan.next();
 
         for (int i = 0; i < proyecto.getTareas().size(); i++) {
             if (nombreTareaFinalizada.equals(proyecto.getTareas().get(i))){
@@ -142,44 +174,57 @@ public class Aplicacion {
         }
     }
 
-    //caso 4
-    public static void añadirPersona(Tarea tarea, Scanner scan, Persona persona) {
-        System.out.println("Persona ha añadir a la tarea");
-        String nuevaPersona = scan.nextLine();
-        for (int i = 0; i < tarea.getPersonasAsignadas().size(); i++) {
-            if (nuevaPersona.equals(persona.getNombre())) {
-                if (nuevaPersona.equals(tarea.getPersonasAsignadas().get(i))) {
-                    System.out.println("Esta persona ya esta asignada a la tarea");
-                }
-                else {
-                    tarea.getPersonasAsignadas().add(persona);
-                }
-            }
+    // caso 4
+    public static void introducirPersona(Scanner scan, List<Persona> personas, Proyecto proyecto){
+        for (int i = 0; i < proyecto.getTareas().size(); i++) {
+            System.out.println(i + ": " + proyecto.getTareas().get(i).getTitulo());
+        }
+        System.out.println("En que tarea quieres añadir a la nueva persona");
+        int numTarea = scan.nextInt();
+
+        for (int i = 0; i < personas.size(); i++) {
+            System.out.println(i + ": " + personas.get(i).getNombre());
+        }
+
+        System.out.println("Que persona desea añadir a la tarea");
+        int numPersona = scan.nextInt();
+
+        proyecto.getTareas().get(numPersona).setPersonasAsignadas(personas.get(numPersona));
+    }
+
+    // caso 5
+    public static void eliminarPersona(Scanner scan, List<Persona> personas, Proyecto proyecto){
+        for (int i = 0; i < proyecto.getTareas().size(); i++) {
+            System.out.println(i + ": " + proyecto.getTareas().get(i).getTitulo());
+        }
+        System.out.println("De que tarea desea eliminar la persona");
+        int numTarea = scan.nextInt();
+
+        for (int i = 0; i < personas.size(); i++) {
+            System.out.println(i + ": " + personas.get(i).getNombre());
+        }
+
+        System.out.println("Que persona desea eliminar de la tarea");
+        int numPersona = scan.nextInt();
+        System.out.println("Esta seguro que desea eliminar a "+personas.get(numPersona).getNombre()+" De la tarea "+ proyecto.getTareas().get(numTarea).getTitulo()+"? \n 1- Si 0- No");
+        int numCorfirmacion = scan.nextInt();
+
+        if(numCorfirmacion == 1){
+            proyecto.getTareas().get(numPersona).getPersonasAsignadas().remove(numPersona);
         }
     }
 
-    //caso 5
-    public static void eliminarPersona(Tarea tarea, Scanner scan) {
-        System.out.println("Introduzca el nombre de la persona que quiere eliminar");
-        String personaEliminada = scan.nextLine();
-
-        for (int i = 0; i < tarea.getPersonasAsignadas().size(); i++) {
-            if (personaEliminada.equals(tarea.getPersonasAsignadas().get(i).getNombre())) {
-                tarea.getPersonasAsignadas().remove(personaEliminada);
-            }
+    //Caso 6
+    public static void listarPersonasProyecto(Proyecto proyecto){
+        for (int i = 0; i < proyecto.getPersonas().size(); i++) {
+            System.out.println(proyecto.getPersonas().get(i).getNombre());
         }
-    }
-
-    //caso 6
-    public static void listarPersonasProyecto (Proyecto proyecto) {
-
     }
 
     //caso 7
-    public static void listarTareasProyecto (Proyecto proyecto) {
-        Iterator iter = proyecto.getTareas().iterator();
-        while (iter.hasNext()) {
-            System.out.println(iter.next());
+    public static void listarTareasProyecto(Proyecto proyecto){
+        for (int i = 0; i < proyecto.getTareas().size(); i++) {
+            System.out.println(proyecto.getTareas().get(i).toString());
         }
     }
 

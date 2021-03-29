@@ -5,12 +5,12 @@ import java.util.Map;
 
 public class Proyecto {
     private String nombre;
-    private Map<String,Persona> personas = new HashMap<String,Persona>();
+    private List<Persona> personas = new ArrayList<Persona>();
     private List<Tarea> tareas = new ArrayList<Tarea>();
 
     public Proyecto(){}
 
-    public Proyecto(String nombre, Map<String, Persona> personas, List<Tarea> tareas) {
+    public Proyecto(String nombre, List <Persona> personas, List<Tarea> tareas) {
         this.nombre = nombre;
         this.personas = personas;
         this.tareas = tareas;
@@ -20,8 +20,8 @@ public class Proyecto {
         this.nombre = nombre;
     }
 
-    public void setPersonas(String dni, Persona persona) {
-        personas.put(dni, persona);
+    public void setPersonas(Persona persona) {
+        personas.add(persona);
     }
 
     public void setTareas(List<Tarea> tareas) {
@@ -32,7 +32,7 @@ public class Proyecto {
         return nombre;
     }
 
-    public Map<String, Persona> getPersonas() {
+    public List <Persona> getPersonas() {
         return personas;
     }
 
