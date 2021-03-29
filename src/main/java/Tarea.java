@@ -69,6 +69,7 @@ public class Tarea {
         this.listaEtiquetas = listaEtiquetas;
     }
 
+
     public String getTitulo() {
         return titulo;
     }
@@ -112,11 +113,11 @@ public class Tarea {
     @Override
     public String toString() {
         return "Tarea{" +
-                "titulo='" + titulo + '\'' +
-                ", personasAsignadas=" + personasAsignadas +
-                ", responsable=" + responsable +
-                ", estado=" + estado +
-                ", resultadoEsperado=" + resultadoEsperado +
+                "titulo= '" + titulo + '\'' +
+                ", personasAsignadas= " + personasAsignadas +
+                ", responsable= " + responsable.getNombre() +
+                ", estado= " + estado +
+                ", resultadoEsperado= " + resultadoEsperado.toString() +
                 '}';
     }
 }

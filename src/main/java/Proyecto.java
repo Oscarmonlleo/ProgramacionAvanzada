@@ -24,8 +24,8 @@ public class Proyecto {
         personas.add(persona);
     }
 
-    public void setTareas(List<Tarea> tareas) {
-        this.tareas = tareas;
+    public void setTareas(Tarea tarea) {
+        tareas.add(tarea);
     }
 
     public String getNombre() {
